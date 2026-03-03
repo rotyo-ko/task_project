@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+{% load crispy_forms_tags %}
+{% load django_bootstrap5 %}
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>{% block title %}タスク管理{% endblock %}</title>
+    {% bootstrap_css %}
+    {% load static %}
+    
+    {% block extra_css %}
+    <link rel="stylesheet" href="{% static 'tasks/css/style.css' %}">
+    {% endblock %}
+  </head>
+  <body class="d-flex flex-column min-vh-100" style="background-color: rgb(243, 243, 243);">
+    <nav id="main-navbar" class="navbar navbar-expand flex-md-row">
+      <div class="container justify-content-between">
+        <div class="d-flex align-items-center">
+          <a href="/" class="navbar-brand fs-3 hover-opacity" style="color: #212121;">トップページ<p class="fs-5">タスクリスト</p></a>
+          <ul class="navbar-nav mr-md-2">
+            <li class="nav-item"><a class="nav-link hover-opacity" href="{% url 'tasks:create' %}">新規作成</a></li>
+            <li class="nav-item"><a class="nav-link hover-opacity" href="{% url 'tasks:overdue_list' %}">期限切れのタスク</a></li>
+            <li class="nav-item"><a class="nav-link hover-opacity" href="{% url 'tasks:completed_list' %}">完了タスク</a></li>
+          </ul>
+        </div>
+        {% if user.is_staff %}
+          <ul class="navbar-nav mr-md-2">
+            <li class="nav-item"><a class="nav-link hover-opacity" href="{% url 'tasks:log' %}">タスク作成ログ</a></li>
+            <li class="nav-item"><a class="nav-link hover-opacity" href="{% url 'accounts:log' %}">ユーザー作成ログ</a></li>
+          </ul>
+        {% endif %}
+
+        <ul class="navbar-nav mr-md-2">
+          {% if user.is_staff %}
+            <li class="nav-item"><a class="nav-link hover-opacity" href="{% url 'admin:index' %}">管理ページ</a></li>
+          {% endif %}
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link fw-bold hover-opacity" href="{% url 'accounts:user_detail' %}">YourPage</a>
+          </li>
+          <li class="nav-item">
+            <form method="post" action="{% url 'accounts:logout' %}" >
+              {% csrf_token %}
+              <button type="submit" class="btn btn-link nav-link fw-bold hover-opacity">
+                LogOut
+              </button>
+            </form>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link fw-bold hover-opacity" href="{% url 'accounts:signup' %}">SignUp</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-bold hover-opacity" href="{% url 'accounts:login' %}">LogIn</a>
+          </li>
+          {% endif %}          
+        </ul>
+      </div>
+    </nav>
+  <main>
+    <div class="container">
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center m-2" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+      {% endfor %}
+      
+      <header class="d-flex align-items-center justify-content-center text-center fs-3 align-items-center">
+      {% block header %}{% endblock %}
+      </header>
+      <hr>
+      {% block content %}{% endblock %}
+    </div>
+  
+  </main>
+    
+  <footer class="py-5 fw-bold mt-auto">
+    <div class="text-center container">Copyright &copy;</div>
+  </footer>
+    
+  </body>
+</html>

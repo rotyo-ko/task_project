@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}タスク作成ログ{% endblock %}
+
+{%block header %}タスク作成ログ{% endblock %}
+
+{% block content %}
+<div class="container p-2">
+
+{% if logs %}
+<table class="table my-2">
+  <thead>
+    <tr>
+      <th>タイトル</th>
+      <th>作成者</th>
+      <th>作成日</th>
+      <th></th>
+
+    </tr>
+    </thead>
+    
+    <tbody>
+      {% for log in logs %}
+      <tr>
+        <td>{{ log.task.title }}</td>
+        <td>{{ log.task.creator.name }}</td>
+        <td>{{ log.created_at|date:"Y年m月d日" }}</td>
+        <td><a href="{% url 'tasks:detail' pk=log.task.pk %}" class="btn btn-primary hover-opacity">詳細</a></td>
+      </tr>
+      {% endfor %}
+   </tbody> 
+</table>
+{% else %}
+<p>ログはまだありません</p>
+{% endif %}
+
+<nav aria-label="Page navigation" class="my-2">
+        <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+            <li class="page-item">
+              <a class="page-link hover-opacity" href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_obj.previous_page_number }}">«</a>
+            </li>
+          {% endif %}
+
+          <!--現在のページの前後3ページのリンクを表示-->
+          {% for num in page_obj.paginator.page_range %}
+           {% if num >= page_obj.number|add:'-3' and num <= page_obj.number|add:'3' %}
+              {% if page_obj.number == num %}
+                <li class="page-item active" aria-current="page">
+                  <span class="page-link">{{ num }}</span>
+                </li>
+              {% else %}
+                <li class="page-item">
+                  <a class="page-link hover-opacity" href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ num }}">{{ num }}</a>
+                </li>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+      
+          {% if page_obj.has_next %}
+          <li class="page-item">  
+            <a class="page-link hover-opacity" href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_obj.next_page_number }}">»</a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+</div>
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}タスク新規作成{% endblock %}
+
+{% block header %}タスク新規作成{% endblock %}
+
+{% block content %}
+<form method="post" >
+  {% csrf_token %}
+  {{ form|crispy }}
+  
+  {% if view.object %}
+  <button type="submit" class="btn btn-green">更新</button>
+  {% else %}
+  <button type="submit" class="btn btn-primary">作成</button>
+  {% endif %}
+
+</form>
+{% endblock %}
+

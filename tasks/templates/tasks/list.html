@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{%block header %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="container p-2">
+<div class="d-flex justify-content-between align-items-center p-2 " style="background-color: rgb(225, 255, 255);">
+  <form method="get">
+    {{ form.status }}
+    {{ form.keyword }}
+    <button class="btn btn-skyblue mx-3 hover-opacity">検索</button>
+  </form>
+  
+</div>
+{% if task_list %}
+<table class="table my-2">
+  <thead>
+    <tr>
+      <th>タイトル</th>
+      <th>状況</th>
+      <th>期限</th>
+      <th></th>
+
+    </tr>
+    </thead>
+    
+    <tbody>
+      {% for task in task_list %}
+      <tr>
+        <td>{{ task.title }}</td>
+        <td>{{ task.get_status_display }}</td>
+        <td>{{ task.due_date|date:"Y年m月d日" }}</td>
+        <td><a href="{% url 'tasks:detail' pk=task.pk %}" class="btn btn-primary hover-opacity">詳細</a></td>
+      </tr>
+      {% endfor %}
+   </tbody> 
+</table>
+{% else %}
+<p>タスクはまだありません</p>
+{% endif %}
+
+<nav aria-label="Page navigation" class="my-2">
+        <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+            <li class="page-item">
+              <a class="page-link hover-opacity" href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_obj.previous_page_number }}">«</a>
+            </li>
+          {% endif %}
+
+          <!--現在のページの前後3ページのリンクを表示-->
+          {% for num in page_obj.paginator.page_range %}
+           {% if num >= page_obj.number|add:'-3' and num <= page_obj.number|add:'3' %}
+              {% if page_obj.number == num %}
+                <li class="page-item active" aria-current="page">
+                  <span class="page-link">{{ num }}</span>
+                </li>
+              {% else %}
+                <li class="page-item">
+                  <a class="page-link hover-opacity" href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ num }}">{{ num }}</a>
+                </li>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+      
+          {% if page_obj.has_next %}
+          <li class="page-item">  
+            <a class="page-link hover-opacity" href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_obj.next_page_number }}">»</a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+</div>
+
+{% endblock %}
+

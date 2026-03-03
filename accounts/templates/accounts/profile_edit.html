@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}プロフィール編集{% endblock %}
+
+{% block header %}プロフィール編集{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center fs-5" style="min-height:60vh;">
+  <div class="card p-4 shadow-sm" style="width: 500px;">
+       
+      <form method="post">
+        {% csrf_token %}
+        {{ user_form|crispy }}
+        {{ profile_form|crispy }}
+      <button class="btn btn-lg btn-primary mt-3 w-100" type="submit">登録</button>
+      </form>
+   </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+#main-navbar {
+    background-color: rgb(47, 47, 227);
+    color:#ffffff;
+    padding: 20px;
+}
+
+.navbar .navbar-brand {
+    color:#ffffff;
+    font-weight: bold;
+}
+
+.navbar .nav-link {
+    color:rgb(208, 208, 208);
+    font-weight: bold;
+}
+
+.hover-opacity:hover {
+  opacity: 0.50;
+  transition: opacity 0.2s ease;
+}
+
+footer {
+    background-color:black;
+    color:white;
+}
+
+.btn-green {
+    background-color: green;
+    color:#ffffff
+}
+
+.btn-red {
+    background-color: red;
+    color:#ffffff;
+}
+
+.btn-purple {
+   background-color: purple;
+    color:#ffffff; 
+}
+
+.btn-skyblue {
+    background-color: rgb(37, 160, 236);
+    color:#ffffff;
+}

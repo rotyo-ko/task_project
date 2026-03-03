@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}ユーザー{% endblock %}
+
+{% block header %}ユーザー{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center fs-5" style="min-height:60vh;">
+  <div class="card p-4 shadow-sm" style="width: 500px;">
+      <ul>
+      <li>名前: {{ user_obj.name }}</li>
+        <li>ユーザー名: {{ user_obj.username }}</li>
+        <li>メール: {{ user_obj.email }}</li>
+        <li>自己紹介: {{ user_obj.profile.bio|linebreaksbr }}</li>
+        
+      </ul>
+      <a class="btn btn-perple btn-primary fw-bold hover-opacity" href="{% url 'accounts:user_edit' %}">編集ページへ</a>
+    </div>
+</div>
+{% endblock %}

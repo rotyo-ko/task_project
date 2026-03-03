@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}削除確認{% endblock %}
+
+{%block header %}削除確認{% endblock %}
+
+{% block content %}
+<div class="card p-4">
+  <p>本当に削除しますか？</p>
+  <form method="post" action="{% url 'tasks:delete' pk=task.pk %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-red hover-opacity">削除</button>
+  </form>
+</div>
+{% endblock %}

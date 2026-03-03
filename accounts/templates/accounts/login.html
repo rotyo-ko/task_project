@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}まいめも|ログイン{% endblock %}
+
+{% block header %}ログイン{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center fs-5" style="min-height:60vh;">
+  <div class="card p-4 shadow-sm" style="width: 500px;">
+       
+      <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+      <button class="btn btn-lg btn-primary mt-3 w-100 hover-opacity" type="submit">ログイン</button>
+      </form>
+      <p class="mt-3 text-center">
+      アカウントを
+      <a class="hover-opacity" href="{% url 'accounts:signup' %}">SignUp</a>から作成してください
+    </p>
+   </div>
+</div>
+{% endblock %}
