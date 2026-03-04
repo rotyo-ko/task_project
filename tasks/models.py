@@ -116,7 +116,7 @@ class Task(models.Model):
 
 class TaskCreateLog(models.Model):
     task = models.OneToOneField(Task, on_delete=models.CASCADE, related_name="create_log")
-    created = models.DateTimeField("作成日時", auto_now_add=True)
+    created_at = models.DateTimeField("作成日時", auto_now_add=True,)
 
 
         

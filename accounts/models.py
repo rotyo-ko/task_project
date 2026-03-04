@@ -9,7 +9,12 @@ class CustomUser(AbstractUser):
         verbose_name_plural = "CustomUser"
     @property
     def name(self):
-        return f"{self.last_name} {self.first_name}"
+        if self.last_name and self.first_name:
+            return f"{self.last_name} {self.first_name}"
+        else:
+            return f"{self.username}"
+    def __str__(self):
+        return self.name
        
 class CustomUserProfile(models.Model):
     user = models.OneToOneField(

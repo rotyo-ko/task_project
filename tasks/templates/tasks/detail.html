@@ -14,16 +14,16 @@
     <span class="fs-5 d-flex">状況:  
       <p class="fw-bold ms-2"> {{ task.get_status_display }} </p>
     </span>
-      {% if task.can_complete %}
+      {% if task.can_complete and task.creator == user%}
       <form method="post" action="{% url 'tasks:complete' pk=task.pk %}">
         {% csrf_token %}
           <button type="submit" class="btn btn-purple hover-opacity ms-4">完了ボタン</button>
         </form>
-          {% endif %}
-      {% if task.can_reopen %}
-      <form method="post" action="{% url 'tasks:reopen' pk=task.pk %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-primary hover-opacity ms-4">再開ボタン</button>
+      {% endif %}
+      {% if task.can_reopen and task.creator == user %}
+        <form method="post" action="{% url 'tasks:reopen' pk=task.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary hover-opacity ms-4">再開ボタン</button>
         </form>
       {% endif %}
     </div>
@@ -31,8 +31,10 @@
     <span>完了日時: {{ task.completed_at|date:"Y年m月d日 H時i分s秒" }}</span>
     <span class="p-1 m-1" style="background-color: rgb(230, 230, 230);">{{ task.description|linebreaks }}</span>
     <div class="d-flex mx-2 ">
-    <a href="{% url 'tasks:edit' pk=task.pk %}" class="me-2 btn btn-green">編集</a>
-    <a href="{% url 'tasks:delete' pk=task.pk %}" class="btn btn-red" style="background-color: brown;">削除</a>
+    {% if task.creator == user %}
+      <a href="{% url 'tasks:edit' pk=task.pk %}" class="me-2 btn btn-green">編集</a>
+      <a href="{% url 'tasks:delete' pk=task.pk %}" class="btn btn-red" style="background-color: brown;">削除</a>
+    {% endif %}
     </div>
     <span class="ms-auto">作成日時: {{ task.created_at|date:"Y年m月d日 H時i分s秒" }}</span>
     <span class="ms-auto">更新日時: {{ task.updated_at|date:"Y年m月d日 H時i分s秒" }}</span>

@@ -1,16 +1,29 @@
 from datetime import date, datetime
 from unittest.mock import patch
 from django.utils import timezone
+from django.contrib.auth import get_user_model 
 from rest_framework.test import APITestCase
 
 from ..models import Task
 
 
+User = get_user_model()
+
 class TaskAPITest(APITestCase):
     def setUp(self):
+        self.user = User.objects.create_user(
+            username="test",
+            password="password",
+        )
+        self.member = User.objects.create_user(
+            username="member",
+            password="password",
+        )
+        self.client.login(username="test", password="password")
         self.task = Task.objects.create(
             title="test",
             description="test_description",
+            members=self.member,
             due_date=date(2026, 2, 24)
         )
     
@@ -131,6 +144,12 @@ class TestTaskMarkDone(APITestCase):
 
 
 class TestTaskReopen(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="test",
+            password="password",
+        )
+        self.client.login(username="test", password="password")
     
     def test_reopen(self):
         self.task = Task.objects.create(

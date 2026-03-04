@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.db import transaction
 
-from .models import CustomUserCreateLog
+from .models import CustomUserCreateLog, CustomUserProfile
 from .forms import CustomUserCreationForm, CustomUserEditForm, CustomUserProfileForm
 
 
@@ -50,7 +50,8 @@ class CustomUserCreateLogListView(LoginRequiredMixin, UserPassesTestMixin, ListV
     context_object_name = "logs"
     def test_func(self):
         return self.request.user.is_staff
-    
+    def get_queryset(self):
+        return CustomUserCreateLog.objects.order_by("created_at")
 
 class UserDetailView(LoginRequiredMixin, DetailView):
     template_name = "accounts/user_detail.html"
@@ -61,9 +62,10 @@ class UserDetailView(LoginRequiredMixin, DetailView):
 
 @login_required
 def user_edit(request):
+    profile, created = CustomUserProfile.objects.get_or_create(user=request.user)
     if request.method == "POST":
         user_form = CustomUserEditForm(instance=request.user, data=request.POST)
-        profile_form = CustomUserProfileForm(instance=request.user.profile, data=request.POST)
+        profile_form = CustomUserProfileForm(instance=profile, data=request.POST)
         if user_form.is_valid() and profile_form.is_valid():
             with transaction.atomic():
                 user_form.save()
@@ -72,7 +74,7 @@ def user_edit(request):
 
     else:
         user_form = CustomUserEditForm(instance=request.user)
-        profile_form = CustomUserProfileForm(instance=request.user.profile)
+        profile_form = CustomUserProfileForm(instance=profile)
     return render(request, "accounts/profile_edit.html",
                   {"user_form": user_form,
                    "profile_form": profile_form})

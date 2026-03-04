@@ -19,6 +19,8 @@
   <thead>
     <tr>
       <th>タイトル</th>
+      <th>作成者</th>
+      <th>メンバー</th>
       <th>状況</th>
       <th>期限</th>
       <th></th>
@@ -30,6 +32,12 @@
       {% for task in task_list %}
       <tr>
         <td>{{ task.title }}</td>
+        <td>{{ task.creator.name }}</td>
+        <td>
+          
+          {{ task.members.all|join:"<br>"|safe}}<br>
+          
+        </td>
         <td>{{ task.get_status_display }}</td>
         <td>{{ task.due_date|date:"Y年m月d日" }}</td>
         <td><a href="{% url 'tasks:detail' pk=task.pk %}" class="btn btn-primary hover-opacity">詳細</a></td>

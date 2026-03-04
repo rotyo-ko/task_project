@@ -47,25 +47,28 @@ class TaskListView(ListView):
         return context
         
 
-class TaskDetailView(DetailView):
+class TaskDetailView(LoginRequiredMixin, DetailView):
     model = Task
     template_name = "tasks/detail.html"
     context_object_name = "task"
 
-class TaskCreateView(CreateView):
+class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
     form_class = TaskForm
     template_name = "tasks/post_form.html"
     success_url = reverse_lazy("tasks:list")
     def form_valid(self, form):
-        form.instance.creator = self.request.creator 
+        form.instance.creator = self.request.user 
         return super().form_valid(form)
     
 
-class TaskUpdateView(UpdateView):
-    model = Task
+class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
     template_name = "tasks/post_form.html"
     form_class = TaskForm
+    def test_func(self):
+        task = self.get_object()
+        return task.creator == self.request.user
+
     def get_success_url(self):
         self.object = self.get_object()
         return reverse_lazy("tasks:detail", kwargs={"pk": self.object.pk})
@@ -76,17 +79,24 @@ class TaskUpdateView(UpdateView):
         return super().dispatch(request, *args, **kwargs)
         
 
-class TaskDeleteView(DeleteView):
+class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Task
     template_name = "tasks/delete_confirm.html"
     success_url = reverse_lazy("tasks:list")
+    def test_func(self):
+        task = self.get_object()
+        return task.creator == self.request.user
+
 
 
 @method_decorator(require_POST, name="dispatch")
-class TaskCompleteView(UpdateView):
+class TaskCompleteView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Task
     template_name = "tasks/complete_confirm.html"
     fields = []
+    def test_func(self):
+        task = self.get_object()
+        return task.creator == self.request.user
     def get_queryset(self):
         return Task.objects.active()
     def form_valid(self, form):
@@ -96,10 +106,13 @@ class TaskCompleteView(UpdateView):
         return reverse("tasks:detail", kwargs={"pk": self.object.pk})
 
 @method_decorator(require_POST, name="dispatch")    
-class TaskReopenView(UpdateView):
+class TaskReopenView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Task
     template_name = "tasks/reopen_confirm.html"
     fields = []
+    def test_func(self):
+        task = self.get_object()
+        return task.creator == self.request.user
     def get_queryset(self):
         return Task.objects.completed()
     def form_valid(self, form):
@@ -117,6 +130,9 @@ class TaskCreateLogListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     context_object_name = "logs"
     def test_func(self):
         return self.request.user.is_staff
+    def get_queryset(self):
+        return TaskCreateLog.objects.order_by("-created_at")
+        
 
 
     
