@@ -90,13 +90,13 @@ class TaskUpdateView(LoginRequiredMixin, UpdateView):
     
         
 
-class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class TaskDeleteView(LoginRequiredMixin, DeleteView):
     model = Task
     template_name = "tasks/delete_confirm.html"
     success_url = reverse_lazy("tasks:list")
-    def test_func(self):
-        task = self.get_object()
-        return task.creator == self.request.user
+    def get_queryset(self):
+        return Task.objects.filter(creator=self.request.user)
+    
 
 
 

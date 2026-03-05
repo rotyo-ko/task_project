@@ -213,6 +213,7 @@ class TestTaskUpdate(TestCase):
         self.assertEqual(Task.objects.first().title, "update")
         self.assertEqual(Task.objects.first().description, "update")
         self.assertEqual(Task.objects.count(), 1)
+        self.assertFalse(Task.objects.fileter(pk=self.task.pk).exists())
 
     def test_post_by_not_creator(self):
         self.client.login(username="other", password="password")
@@ -245,10 +246,56 @@ class TestTaskUpdate(TestCase):
 
 
 class TestDelete(TestCase):
+    def setUp(self):
+        self.creator = User.objects.create_user(username="creator", password="password")
+        self.other = User.objects.create_user(username="other", password="password")
+        self.task = Task.objects.create(
+            creator=self.creator,
+            title="title",
+            description="description",
+        )
+    
+    def test_get(self):
+        self.client.login(username="creator", password="password")
+        res = self.client.get(reverse("tasks:delete", kwargs={"pk": self.task.pk}))
+        self.assertEqual(res.status_code, 200)
+        self.assertTemplateUsed(res, "tasks/delete_confirm.html")
+        self.assertEqual(res.context["task"], self.task)
 
+    def test_post(self):
+        self.client.login(username="creator", password="password")
+        res = self.client.post(reverse("tasks:delete", kwargs={"pk": self.task.pk}))
+        self.assertEqual(res.status_code, 302)
+        self.assertRedirects(res, reverse("tasks:list"))
+        self.assertEqual(Task.objects.count(), 0)
 
+    def test_get_without_login(self):
+        res = self.client.get(reverse("tasks:delete", kwargs={"pk": self.task.pk}))
+        self.assertEqual(res.status_code, 302)
+    
+    def test_get_by_not_creator(self):
+        self.client.login(username="other", password="password")
+        res = self.client.get(reverse("tasks:delete", kwargs={"pk": self.task.pk}))
+        self.assertEqual(res.status_code, 404)
+        
+    def test_post_without_login(self):
+        res = self.client.post(reverse("tasks:delete", kwargs={"pk": self.task.pk}))
+        self.assertEqual(res.status_code, 302)
 
+    def test_post_by_not_creator(self):
+        self.client.login(username="other", password="password")
+        res = self.client.post(reverse("tasks:delete", kwargs={"pk": self.task.pk}))
+        self.assertEqual(res.status_code, 404)
 
+    def test_get_id_not_exist(self):
+        self.client.login(username="creator", password="password")
+        res = self.client.get(reverse("tasks:delete", kwargs={"pk": 100}))
+        self.assertEqual(res.status_code, 404)
+        
+    def test_post_id_not_exist(self):
+        self.client.login(username="creator", password="password")
+        res = self.client.post(reverse("tasks:delete", kwargs={"pk": 100}))
+        self.assertEqual(res.status_code, 404)
 
 class TestTaskSignals(TestCase):
     def setUp(self):
