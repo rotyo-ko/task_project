@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}404 Not Found{% endblock %}
+
+{%block header %}{% endblock %}
+
+{% block content %}
+<h1>404 Not Found</h1>
+<p>ページが見つかりません。</p>
+
+<a href="{% url 'tasks:list' %}">タスク一覧へ戻る</a>
+{% endblock %}

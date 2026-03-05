@@ -9,6 +9,7 @@ from .views import (
     TaskCompleteView,
     TaskReopenView,
     TaskCreateLogListView,
+    AdminTaskListView,
 )
 
 app_name = "tasks"
@@ -29,5 +30,6 @@ urlpatterns = [
     path("<int:pk>/reopen", TaskReopenView.as_view(),
         name="reopen"),
     path("list/log/", TaskCreateLogListView.as_view(), name="log"),
+    path("list/admin/", AdminTaskListView.as_view(), name="admin_list")
 
 ]

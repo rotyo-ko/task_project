@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}403 Forbidden{% endblock %}
+
+{%block header %}{% endblock %}
+
+{% block content %}
+<h1>403 Forbiden</h1>
+<p>権限がありません</p>
+
+<a href="{% url 'tasks:list' %}">タスク一覧へ戻る</a>
+{% endblock %}
